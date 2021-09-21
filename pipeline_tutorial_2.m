@@ -30,11 +30,11 @@ addpath(genpath(script_dir));
 addpath(genpath(NR4M_dir));
 addpath(mocap_func);
 
-%% BIDS data directory (change for your set-up)
-data_dir        = 'D:\data\motor';
+%% BIDS data directory. This is specific to my PC - change accordingly.
+data_dir        = 'D:\data\tutorial_OPM_data';
 
-%% Save directory
-save_dir        = 'D:\data\motor\results\tutorial2';
+%% Specify Save Directory
+save_dir        = fullfile(data_dir,'results','tutorial2');
 cd(save_dir);
 
 %% Read in the raw BIDS-organised data
@@ -42,7 +42,7 @@ disp('Loading data...');
 cfg             = [];
 cfg.folder      = data_dir;
 cfg.precision   = 'single';
-cfg.bids.task   = 'task';
+cfg.bids.task   = 'motor';
 cfg.bids.sub    = '001';
 cfg.bids.ses    = '001';
 cfg.bids.run    = '001';
@@ -457,6 +457,7 @@ xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);
 plot(repmat(2.5,length([1:2:41])),[1:2:41],'--k','LineWidth',2);
 print('beta_desync_MZ_raw','-dpng','-r300');
+
 
 % Now DQ
 cfg.channel         = 'DQ-TAN';
