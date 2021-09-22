@@ -9,7 +9,10 @@
 % Dr. Robert Seymour, July 2021 - September 2021
 % For enquiries, please contact: rob.seymour@ucl.ac.uk
 %
+% Tested on MATLAB 2019a, Windows
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %% Data Paths
 % See: https://www.fieldtriptoolbox.org/download/
@@ -30,12 +33,15 @@ addpath(genpath(script_dir));
 addpath(genpath(NR4M_dir));
 addpath(mocap_func);
 
+
 %% BIDS data directory. This is specific to my PC - change accordingly.
 data_dir        = 'D:\data\tutorial_OPM_data';
+
 
 %% Specify Save Directory
 save_dir        = fullfile(data_dir,'results','tutorial2');
 cd(save_dir);
+
 
 %% Read in the raw BIDS-organised data
 disp('Loading data...');
@@ -48,10 +54,12 @@ cfg.bids.ses    = '001';
 cfg.bids.run    = '001';
 rawData         = ft_opm_create(cfg);
 
+
 %% Resample to 1000Hz
 cfg                 = [];
 cfg.resamplefs      = 1000;
 [rawData]           = ft_resampledata(cfg, rawData);
+
 
 %% Plot PSD
 cfg                 = [];
@@ -67,6 +75,7 @@ cfg.transparency    = 0.3;
 [pow freq]          = ft_opm_psd(cfg,rawData);
 ylim([5 1e4])
 print('raw_data_psd','-dpng','-r300');
+
 
 %% Filter the data
 % Spectral Interpolation
@@ -91,6 +100,7 @@ cfg.lpfilter            = 'yes';
 cfg.lpfreq              = 80;
 rawData_si_hp_lp        = ft_preprocessing(cfg,rawData_si_hp);
 
+
 %% Plot PSD
 cfg                 = [];
 cfg.channel         = vertcat(ft_channelselection_opm('MEG',rawData));
@@ -104,6 +114,7 @@ cfg.plot_legend     = 'no';
 cfg.transparency    = 0.3;
 [pow freq]          = ft_opm_psd(cfg,rawData_si_hp_lp);
 ylim([5 1e4])
+
 
 %% Synthetic Gradiometry Using 100s overlapping windows
 cfg                 = [];
@@ -132,6 +143,7 @@ cfg.transparency    = 0.3;
 [pow freq]          = ft_opm_psd_compare(cfg,rawData_si_hp_lp,data_synth_grad);
 print('synth_grad_psd','-dpng','-r300');
 
+
 %% HFC
 [data_out_mfc, M, chan_inds] = ft_denoise_hfc(data_synth_grad);
 
@@ -149,6 +161,7 @@ cfg.transparency    = 0.3;
 [pow freq]          = ft_opm_psd_compare(cfg,data_synth_grad,data_out_mfc);
 print('HFC','-dpng','-r400');
 
+
 %% Spectral Interpolation for remaining 50Hz line noise
 cfg                     = [];
 cfg.channel             = 'all';
@@ -158,6 +171,7 @@ cfg.dftreplace          = 'neighbour';
 cfg.dftbandwidth        = [1];
 cfg.dftneighbourwidth   = [1];
 data_out_mfc       = ft_preprocessing(cfg,data_out_mfc);
+
 
 %% Make grad structure only for TAN channels
 grad_TAN = [];
@@ -189,6 +203,7 @@ cfg.channel     =  'all';
 %cfg.overlap     = 'no';
 lay_TAN         = ft_prepare_layout(cfg);
 
+
 %% ICA
 % Run ICA
 disp('About to run ICA using the fastica method')
@@ -201,12 +216,13 @@ cfg.updatesens      = 'no';
 cfg.randomseed      = 454;
 comp                = ft_componentanalysis(cfg, data_out_mfc);
 
-%%
+% Create Fieldtrip data structure with ICA components instead of MEG data
 data_ICA            = data_out_mfc;
 data_ICA.label      = comp.label;
 data_ICA.trial{1}   = comp.trial{1};
 
-%% Let's build an interactive IC plot viewer
+
+%% Build an interactive IC plot viewer
 % Calculate PSD
 cfg                 = [];
 cfg.channel         = 'all';
@@ -235,7 +251,6 @@ for c = 1:30
         'string','NEXT',...
         'UserData',struct('flip',0),...
         'callback',@pb_call);
-    
     
     % Find limits of y-axis
     [minDistance, indexOfMin] = min(abs(freq-2));
@@ -288,6 +303,7 @@ for c = 1:30
     
 end
 
+
 %% Post-ICA processing:
 % The original data can now be reconstructed, excluding specified components
 cfg           = [];
@@ -306,9 +322,10 @@ cfg.plot_ci         = 'no';
 cfg.plot_legend     = 'no';
 cfg.transparency    = 0.3;
 [pow freq]          = ft_opm_psd_compare(cfg,data_out_mfc,data_clean);
-print('2_ICA_gain','-dpng','-r300')
+print('ICA_gain','-dpng','-r300')
 
-%% Calculate max field change per second
+
+%% Calculate max field change /s following various pre-processign steps
 
 [max_FC1,num_secs] = max_FC_calc(rawData);
 [max_FC2,num_secs] = max_FC_calc(rawData_si_hp_lp);
@@ -347,6 +364,7 @@ banana                      = ft_definetrial(cfg);
 cfg = [];
 data = ft_redefinetrial(banana,data_clean);
 
+
 %% Calculate TFRs using a hanning taper
 cfg              = [];
 cfg.output       = 'pow';
@@ -357,6 +375,7 @@ cfg.foi          = 1:2:41;
 cfg.t_ftimwin    = ones(length(cfg.foi),1).*0.5;   % length of time window = 0.5 sec
 cfg.toi          = -2:0.05:6;
 TFR              = ft_freqanalysis(cfg, data);
+
 
 %% Plot Fieldmaps for beta desync and beta rebound
 cfg                 = [];
@@ -418,6 +437,7 @@ ylabel('Frequency (Hz)','FontSize',25);
 plot(repmat(2.5,length([1:2:41])),[1:2:41],'--k','LineWidth',2);
 print('beta_desync_DQ','-dpng','-r300');
 
+
 %% Repeat the TFR analysis with raw, unprocessed data
 % Redefines the filtered data
 cfg = [];
@@ -458,7 +478,6 @@ ylabel('Frequency (Hz)','FontSize',25);
 plot(repmat(2.5,length([1:2:41])),[1:2:41],'--k','LineWidth',2);
 print('beta_desync_MZ_raw','-dpng','-r300');
 
-
 % Now DQ
 cfg.channel         = 'DQ-TAN';
 figure;ft_singleplotTFR(cfg,TFR); hold on;
@@ -471,3 +490,4 @@ xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);
 plot(repmat(2.5,length([1:2:41])),[1:2:41],'--k','LineWidth',2);
 print('beta_desync_DQ_raw','-dpng','-r300');
+
