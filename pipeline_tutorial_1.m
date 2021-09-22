@@ -497,7 +497,8 @@ mri             = ft_read_mri(fullfile(data_dir,'sub-001','ses-002',...
     'anat','001.nii')); mri.coordsys = 'neuromag';
 
 % Load Headmodel
-load(fullfile(data_dir,'fieldtrip_sourcespace','sub-001','sub-001_desc-headmodel.mat'));
+load(fullfile(data_dir,'derivatives','fieldtrip_sourcespace',...
+    'sub-001','sub-001_desc-headmodel.mat'));
 
 
 %%  LF for Virtual electrode analysis
