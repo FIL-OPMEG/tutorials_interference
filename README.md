@@ -14,7 +14,6 @@ Tutorial-style scripts for the paper:
 ### 2. Motor-beta power changes during a finger-tapping paradigm
 
 - Data: [https://doi.org/10.5281/zenodo.5539414](https://doi.org/10.5281/zenodo.5539414)
-
 - Script: [pipeline_tutorial_2.m](./pipeline_tutorial_2.m)
 
 ## License:
