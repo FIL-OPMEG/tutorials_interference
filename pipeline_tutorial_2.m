@@ -2,7 +2,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Second example tutorial for the manuscript:
 %
-% 'Interference Suppression Techniques for Optically-Pumped
+% 'Interference Suppression Techniques for OPM-based
 % MEG: Opportunities and Challenges'. Seymour et al., (2021)
 %
 % MATLAB scripts were written by 
@@ -15,13 +15,19 @@
 
 
 %% Data Paths
-% See: https://www.fieldtriptoolbox.org/download/
-fieldtripDir    = 'D:\scripts\fieldtrip-master';
-% See: https://zenodo.org/badge/latestdoi/236480732
-script_dir      = 'D:\Github\analyse_OPMEG';
-% For access to these repositories, please contact rob.seymour@ucl.ac.uk
-mocap_func      = 'D:\Github\optitrack';
-NR4M_dir        = 'D:\Github\NR4M';
+% Please download all code dependencies from Zenodo:
+% https://doi.org/10.5281/zenodo.5541312
+%
+% Or alternatively, you can download the latest versions from:
+% - Fieldtrip:     https://www.fieldtriptoolbox.org/download/
+% - analyse_OPMEG: https://github.com/neurofractal/analyse_OPMEG
+% - NR4M*:          https://github.com/FIL-OPMEG/NR4M
+%
+% * = private repository. Email rob.seymour@ucl.ac.uk for access
+
+fieldtripDir    = 'D:\data\tutorial_OPM_scripts\fieldtrip-master';
+script_dir      = 'D:\data\tutorial_OPM_scripts\analyse_OPMEG';
+NR4M_dir        = 'D:\data\tutorial_OPM_scripts\NR4M';
 
 % Add Fieldtrip to path
 disp('Adding the required scripts to your MATLAB path');
@@ -31,15 +37,16 @@ ft_defaults;
 % Add other scripts to path
 addpath(genpath(script_dir));
 addpath(genpath(NR4M_dir));
-addpath(mocap_func);
 
 
 %% BIDS data directory. This is specific to my PC - change accordingly.
+% Download from: https://doi.org/10.5281/zenodo.5539414
 data_dir        = 'D:\data\tutorial_OPM_data';
 
 
 %% Specify Save Directory
 save_dir        = fullfile(data_dir,'results','tutorial2');
+mkdir(save_dir);
 cd(save_dir);
 
 
@@ -174,9 +181,9 @@ data_out_mfc       = ft_preprocessing(cfg,data_out_mfc);
 
 
 %% Make grad structure only for TAN channels
-grad_TAN = [];
-grad_TAN.unit = 'mm';
-count = 1;
+grad_TAN        = [];
+grad_TAN.unit   = 'mm';
+count           = 1;
 
 for i = 1:length(data_out_mfc.grad.label)
     if strcmp(data_out_mfc.grad.label{i}(end-2:end),'TAN')
@@ -186,8 +193,8 @@ for i = 1:length(data_out_mfc.grad.label)
         grad_TAN.chanunit{count}  = data_out_mfc.grad.chanunit{i};
         grad_TAN.coilori(count,:) = data_out_mfc.grad.coilori(i,:);
         grad_TAN.coilpos(count,:) = data_out_mfc.grad.coilpos(i,:);
-        grad_TAN.label{count}  = data_out_mfc.grad.label{i};
-        count = count+1;
+        grad_TAN.label{count}     = data_out_mfc.grad.label{i};
+        count                     = count+1;
     end
 end
 
@@ -306,9 +313,9 @@ end
 
 %% Post-ICA processing:
 % The original data can now be reconstructed, excluding specified components
-cfg           = [];
-cfg.component = [6 10]; %these are the components to be removed
-data_clean    = ft_rejectcomponent(cfg, comp,data_out_mfc);
+cfg                 = [];
+cfg.component       = [6 10]; %these are the components to be removed
+data_clean          = ft_rejectcomponent(cfg, comp,data_out_mfc);
 
 % Plot PSD after ICA
 cfg                 = [];
@@ -350,7 +357,7 @@ print('maxFC','-dpng','-r300');
 
 
 %% Epoch the data
-cfg = [];
+cfg                         = [];
 cfg.rawData                 = rawData;
 cfg.trialdef.trigchan       = 'NI-TRIG';
 cfg.trialdef.downsample     = 1000;
@@ -361,8 +368,8 @@ cfg.trialfun                = 'OPM_trialfun_usemat';
 banana                      = ft_definetrial(cfg);
 
 % Redefines the filtered data
-cfg = [];
-data = ft_redefinetrial(banana,data_clean);
+cfg         = [];
+data        = ft_redefinetrial(banana,data_clean);
 
 
 %% Calculate TFRs using a hanning taper
@@ -386,18 +393,18 @@ cfg.ylim            = [13 30];
 cfg.xlim            = [0 2.5];
 cfg.baseline        = [-1.5 0];
 cfg.baselinetype    = 'db';
-cfg.zlim = 'maxabs';
-cfg.comment = 'no';
+cfg.zlim            = 'maxabs';
+cfg.comment         = 'no';
 figure;ft_topoplotTFR(cfg,TFR); hold on;
-c = colorbar;
-c.FontSize = 18;
+c                   = colorbar;
+c.FontSize          = 18;
 c.Label.String = 'Power (dB)';
 print('beta_desync','-dpng','-r300');
 cfg.xlim            = [2.5 4];
 figure;ft_topoplotTFR(cfg,TFR); hold on;
-c = colorbar;
-c.FontSize = 18;
-c.Label.String = 'Power (dB)';
+c                   = colorbar;
+c.FontSize          = 18;
+c.Label.String      = 'Power (dB)';
 print('beta_rebound','-dpng','-r300');
 
 
@@ -411,13 +418,13 @@ cfg.ylim            = [1 41];
 cfg.xlim            = [-0.5 5.5];
 cfg.baseline        = [-1.5 0];
 cfg.baselinetype    = 'db';
-cfg.zlim = 'maxabs';
-cfg.comment = 'no';
+cfg.zlim            = 'maxabs';
+cfg.comment         = 'no';
 figure;ft_singleplotTFR(cfg,TFR); hold on;
 title('');
-c = colorbar;
-c.FontSize = 18;
-c.Label.String = 'Power (dB)';
+c                   = colorbar;
+c.FontSize          = 18;
+c.Label.String      = 'Power (dB)';
 set(gca,'FontSize',20);
 xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);
@@ -428,9 +435,9 @@ print('beta_desync_MZ','-dpng','-r300');
 cfg.channel         = 'DQ-TAN';
 figure;ft_singleplotTFR(cfg,TFR); hold on;
 title('');
-c = colorbar;
-c.FontSize = 18;
-c.Label.String = 'Power (dB)';
+c                   = colorbar;
+c.FontSize          = 18;
+c.Label.String      = 'Power (dB)';
 set(gca,'FontSize',20);
 xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);
@@ -440,8 +447,8 @@ print('beta_desync_DQ','-dpng','-r300');
 
 %% Repeat the TFR analysis with raw, unprocessed data
 % Redefines the filtered data
-cfg = [];
-data_raw = ft_redefinetrial(banana,rawData);
+cfg              = [];
+data_raw         = ft_redefinetrial(banana,rawData);
 
 % TFR
 cfg              = [];
@@ -466,12 +473,12 @@ cfg.xlim            = [-0.5 5.5];
 cfg.baseline        = [-1.5 0];
 cfg.baselinetype    = 'db';
 cfg.zlim = [-8 8];
-cfg.comment = 'no';
+cfg.comment         = 'no';
 figure;ft_singleplotTFR(cfg,TFR); hold on;
 title('');
-c = colorbar;
-c.FontSize = 18;
-c.Label.String = 'Power (dB)';
+c                   = colorbar;
+c.FontSize          = 18;
+c.Label.String      = 'Power (dB)';
 set(gca,'FontSize',20);
 xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);
@@ -482,9 +489,9 @@ print('beta_desync_MZ_raw','-dpng','-r300');
 cfg.channel         = 'DQ-TAN';
 figure;ft_singleplotTFR(cfg,TFR); hold on;
 title('');
-c = colorbar;
-c.FontSize = 18;
-c.Label.String = 'Power (dB)';
+c                   = colorbar;
+c.FontSize          = 18;
+c.Label.String      = 'Power (dB)';
 set(gca,'FontSize',20);
 xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);

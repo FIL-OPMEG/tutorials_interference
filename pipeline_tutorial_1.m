@@ -2,7 +2,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First example tutorial for the manuscript:
 %
-% 'Interference Suppression Techniques for Optically-Pumped
+% 'Interference Suppression Techniques for OPM-based
 % MEG: Opportunities and Challenges'. Seymour et al., (2021)
 %
 % MATLAB scripts were written by 
@@ -15,13 +15,21 @@
 
 
 %% Data Paths
-% See: https://www.fieldtriptoolbox.org/download/
-fieldtripDir    = 'D:\scripts\fieldtrip-master';
-% See: https://zenodo.org/badge/latestdoi/236480732
-script_dir      = 'D:\Github\analyse_OPMEG';
-% For access to these repositories, please contact rob.seymour@ucl.ac.uk
-mocap_func      = 'D:\Github\optitrack';
-NR4M_dir        = 'D:\Github\NR4M';
+% Please download all code dependencies from Zenodo:
+% https://doi.org/10.5281/zenodo.5541312
+%
+% Or alternatively, you can download the latest versions from:
+% - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
+% - analyse_OPMEG:  https://github.com/neurofractal/analyse_OPMEG
+% - NR4M*:          https://github.com/FIL-OPMEG/NR4M
+% - optitrack*:     https://github.com/FIL-OPMEG/optitrack
+%
+% * = private repositories. Email rob.seymour@ucl.ac.uk for access
+
+fieldtripDir    = 'D:\data\tutorial_OPM_scripts\fieldtrip-master';
+script_dir      = 'D:\data\tutorial_OPM_scripts\analyse_OPMEG';
+mocap_func      = 'D:\data\tutorial_OPM_scripts\optitrack';
+NR4M_dir        = 'D:\data\tutorial_OPM_scripts\NR4M';
 
 % Add Fieldtrip to path
 disp('Adding the required scripts to your MATLAB path');
@@ -35,11 +43,13 @@ addpath(mocap_func);
 
 
 %% BIDS data directory. This is specific to my PC - change accordingly.
+% Download from https://doi.org/10.5281/zenodo.5539414
 data_dir        = 'D:\data\tutorial_OPM_data';
 
 
 %% Specify save directory
 save_dir        = fullfile(data_dir,'results','tutorial1');
+mkdir(save_dir);
 cd(save_dir);
 
 
@@ -168,9 +178,9 @@ ref                 = (MovementDataOut.rigidbodies.data(:,1:6));
 ref = fillmissing(ref,'previous');
 
 % Low-pass filter the optitrack data at 2Hz
-[ref]          = ft_preproc_lowpassfilter(...
+[ref]               = ft_preproc_lowpassfilter(...
     ref', 1000, 2, 5);
-ref            = ref';
+ref                 = ref';
 
 % Regress using 10s overlapping windows
 [rawData_MEG_reg]   = regress_motive_OPMdata(rawData_MEG,ref,10);
@@ -294,7 +304,7 @@ cfg.plot_ci         = 'no';
 cfg.plot_legend     = 'no';
 cfg.transparency    = 0.3;
 [pow freq]          = ft_opm_psd(cfg,data_out_si_lp_hp);
-print('temooral_filter1','-dpng','-r400');
+print('temporal_filter1','-dpng','-r400');
 
 
 %% Calculate max field change /s after the various pre-processing steps
@@ -313,7 +323,7 @@ set(gca,'FontSize',20);
 ylabel({'Max Field ';'Change (pT/s)'},'FontSize',25);
 xlabel('Time (s)','FontSize',25);
 set(gca, 'YScale', 'log');
-print('max_FC','-dpng','-r300');
+print('max_FC','-dpng','-r400');
 
 
 %%
@@ -371,11 +381,11 @@ data_all{2}     = ft_redefinetrial(banana,rawData_MEG);
 % once for the raw data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for d = flip(1:2)
+for d = [2 1]
     data = data_all{d};
     
     % Remove trials with any nan data (i.e. has been marked as artefactual)
-    trial2keep = [];
+    trial2keep   = [];
     trial2reject = [];
     count        = 1;
     count2       = 1;
@@ -393,27 +403,27 @@ for d = flip(1:2)
     
     % The bit that actually removes the bad trials
     try
-        cfg                         = [];
-        cfg.trials                  = trial2keep;
-        data = ft_selectdata(cfg,data);
+        cfg               = [];
+        cfg.trials        = trial2keep;
+        data              = ft_selectdata(cfg,data);
     catch
     end
     
     
     % Perform timelockanalysis & baseline-correct
     cfg             = [];
-    cfg.channel    = 'all';
+    cfg.channel     = 'all';
     avg_all         = ft_timelockanalysis(cfg,data);
     
-    cfg = [];
-    cfg.baseline = [-0.1 0];
-    [avg_all] = ft_timelockbaseline(cfg, avg_all);
+    cfg             = [];
+    cfg.baseline    = [-0.1 0];
+    [avg_all]       = ft_timelockbaseline(cfg, avg_all);
     
     % Plot in fT (not included in the paper - just for illustration)
-    cfg = [];
-    cfg.parameter = 'avg';
-    cfg.linewidth = 2;
-    cfg.colorgroups   = 'allblack';
+    cfg             = [];
+    cfg.parameter   = 'avg';
+    cfg.linewidth   = 2;
+    cfg.colorgroups = 'allblack';
     ft_databrowser(cfg,avg_all);
     
     % Perform Students t-test
@@ -436,7 +446,7 @@ for d = flip(1:2)
     xlabel('Time (s)','FontSize',35);
     xlim([-0.1 0.4]);
     ylim([-11 11]);
-    print(['ERF' num2str(d)],'-dpng','-r300');
+    print(['ERF' num2str(d)],'-dpng','-r400');
     
     
     % Create and Plot 2D Layout (Fieldtrip)
@@ -474,7 +484,7 @@ for d = flip(1:2)
     c.Location      = 'southoutside';
     c.FontSize      = 30;
     c.Label.String  = 't-value';
-    print(['fieldtmap' num2str(d)],'-dpng','-r300');
+    print(['fieldtmap' num2str(d)],'-dpng','-r400');
     
 end
 
@@ -530,7 +540,7 @@ cfg.grad            = data.grad;
 cfg.reducerank      = 2; %(default = 3 for EEG, 2 for MEG)
 cfg.normalize       = 'yes' ; %Normalise Leadfield: 'yes' for beamformer
 cfg.normalizeparam  = 1;
-lf_2 = ft_prepare_leadfield(cfg);
+lf_2                = ft_prepare_leadfield(cfg);
 
 % Concat the leadfields
 lf_concat = cat(2,lf_2.leadfield{:});
@@ -577,8 +587,8 @@ for i = 1:length(data.trial)
     epoched_dataset(:,:,i) = VE.trial{1,i};
 end
 
-SE = std(epoched_dataset,[],3)/sqrt(size(epoched_dataset,3));
-avg_VE.t_value = avg_VE.avg./SE;
+SE              = std(epoched_dataset,[],3)/sqrt(size(epoched_dataset,3));
+avg_VE.t_value  = avg_VE.avg./SE;
 
 
 %% Plot the VE t-values over time
@@ -596,7 +606,7 @@ set(gca,'FontSize',18);
 xlabel('Time (s)','FontSize',20);
 ylabel('t-value','FontSize',20);
 title('');
-print('beamforming','-dpng','-r300');
+print('beamforming','-dpng','-r400');
 
 
 
