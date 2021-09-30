@@ -18,7 +18,7 @@ Tutorial-style scripts for the paper:
 
 ## Code Dependencies:
 
-Please download all code dependencies from Zenodo: https://doi.org/10.5281/zenodo.5541312. This will allow you to exactly reproduce the analyses presented in the article.
+Please download all code dependencies from **Zenodo: https://doi.org/10.5281/zenodo.5541312**. This will allow you to exactly reproduce the analyses presented in the article.
 
 Alternatively, you can download the latest versions of the toolboxes from:
 - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
