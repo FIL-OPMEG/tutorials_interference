@@ -9,12 +9,22 @@ Tutorial-style scripts for the paper:
 
 - Data: [https://doi.org/10.5281/zenodo.5539414](https://doi.org/10.5281/zenodo.5539414)
 - Script: [pipeline_tutorial_1.m](./pipeline_tutorial_1.m)
-- arft.m : indices of manually-identified bad time segments
+- *arft.m* : indices of manually-identified bad time segments
 
 ### 2. Motor-beta power changes during a finger-tapping paradigm
 
 - Data: [https://doi.org/10.5281/zenodo.5539414](https://doi.org/10.5281/zenodo.5539414)
 - Script: [pipeline_tutorial_2.m](./pipeline_tutorial_2.m)
+
+## Code Dependencies:
+
+Please download all code dependencies from Zenodo: https://doi.org/10.5281/zenodo.5541312. This will allow you to exactly reproduce the analyses presented in the article.
+
+Alternatively, you can download the latest versions of the toolboxes from:
+- Fieldtrip:      https://www.fieldtriptoolbox.org/download/
+- analyse_OPMEG:  https://github.com/neurofractal/analyse_OPMEG
+- NR4M:           https://github.com/FIL-OPMEG/NR4M
+- optitrack:      https://github.com/FIL-OPMEG/optitrack
 
 ## License:
 
