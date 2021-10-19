@@ -5,7 +5,7 @@
 % 'Interference Suppression Techniques for OPM-based
 % MEG: Opportunities and Challenges'. Seymour et al., (2021)
 %
-% MATLAB scripts were written by 
+% MATLAB scripts were written by
 % Dr. Robert Seymour, July 2021 - September 2021
 % For enquiries, please contact: rob.seymour@ucl.ac.uk
 %
@@ -17,6 +17,8 @@
 %% Data Paths
 % Please download all code dependencies from Zenodo:
 % https://doi.org/10.5281/zenodo.5541312
+% If you download and extract this archive to the directory one level
+% above this script, the paths below should work.
 %
 % Or alternatively, you can download the latest versions from:
 % - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
@@ -26,10 +28,13 @@
 %
 % * = private repositories. Email rob.seymour@ucl.ac.uk for access
 
-fieldtripDir    = 'D:\data\tutorial_OPM_scripts\fieldtrip-master';
-script_dir      = 'D:\data\tutorial_OPM_scripts\analyse_OPMEG';
-mocap_func      = 'D:\data\tutorial_OPM_scripts\optitrack';
-NR4M_dir        = 'D:\data\tutorial_OPM_scripts\NR4M';
+root = fileparts(which(mfilename));
+cd(root);
+
+fieldtripDir    = fullfile(root,'..','tutorial_OPM_scripts','fieldtrip-master');
+script_dir      = fullfile(root,'..','tutorial_OPM_scripts','analyse_OPMEG');
+mocap_func      = fullfile(root,'..','tutorial_OPM_scripts','optitrack');
+NR4M_dir        = fullfile(root,'..','tutorial_OPM_scripts','NR4M');
 
 % Add Fieldtrip to path
 disp('Adding the required scripts to your MATLAB path');
@@ -42,9 +47,10 @@ addpath(genpath(NR4M_dir));
 addpath(mocap_func);
 
 
-%% BIDS data directory. This is specific to my PC - change accordingly.
+%% BIDS data directory. If you extract it to the directory one level above
+% where this script lives, this will work:
 % Download from https://doi.org/10.5281/zenodo.5539414
-data_dir        = 'D:\data\tutorial_OPM_data';
+data_dir        = fullfile(root,'..','tutorial_OPM_data');
 
 
 %% Specify save directory
@@ -131,7 +137,7 @@ set(gcf,'Position',[300 200 1200 500]);
 for c = 1:size(pos_data,2)
     m = pos_data(:,c);
     p1 = plot(t,m,'LineWidth',2,'Color',cols(c,:)); hold on;
-    p1.Color(4) = 0.7; 
+    p1.Color(4) = 0.7;
 end
 ylabel(['Distance (cm)'],'FontSize',24);
 ylim([-100 100]);
@@ -161,10 +167,10 @@ for c = 1:size(degXYZ,2)
     m = degXYZ(:,c);
     %m(log_array,:) = NaN;
     p1 = plot(t,m,'LineWidth',2,'Color',cols(c,:)); hold on;
-    p1.Color(4) = 0.7; 
+    p1.Color(4) = 0.7;
 end
 %plot(t,m,'r','LineWidth',2);
-ylabel(['Degrees (°)'],'FontSize',24);
+ylabel(['Degrees (Â°)'],'FontSize',24);
 set(gca,'FontSize',18);
 xlabel('Time (s)','FontSize',24);
 legend(coord_name,'Location','EastOutside');
@@ -186,7 +192,7 @@ ref                 = ref';
 [rawData_MEG_reg]   = regress_motive_OPMdata(rawData_MEG,ref,10);
 
 
-%% Compare PSD gain before/after regression step 
+%% Compare PSD gain before/after regression step
 cfg                 = [];
 cfg.channel         = vertcat(ft_channelselection_opm('MEG',rawData));
 cfg.trial_length    = 10;
@@ -313,7 +319,7 @@ print('temporal_filter1','-dpng','-r400');
 [max_FC3,num_secs] = max_FC_calc(data_out_mfc);
 [max_FC4,num_secs] = max_FC_calc(data_out_si_lp_hp);
 
-figure; 
+figure;
 set(gcf,'Position',[200 200 800 400]);
 plot(num_secs,mean(max_FC1,2),'r','LineWidth',2); hold on;
 plot(num_secs,mean(max_FC2,2),'g','LineWidth',2);
@@ -340,8 +346,8 @@ arft            = ft_databrowser(cfg,data_out_si_hp);
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% For anyone trying to exactly reproduce the analysis performed in the 
-% paper, please load arft.mat from the tutorials_interference folder, 
+% For anyone trying to exactly reproduce the analysis performed in the
+% paper, please load arft.mat from the tutorials_interference folder,
 % which contains the indices of the time(s) marked as containing artefacts
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -383,13 +389,13 @@ data_all{2}     = ft_redefinetrial(banana,rawData_MEG);
 
 for d = [2 1]
     data = data_all{d};
-    
+
     % Remove trials with any nan data (i.e. has been marked as artefactual)
     trial2keep   = [];
     trial2reject = [];
     count        = 1;
     count2       = 1;
-    
+
     for t = 1:length(data.trial)
         result = sum(isnan(data.trial{t}(:)));
         if ~result
@@ -400,7 +406,7 @@ for d = [2 1]
             count2       = count2+1;
         end
     end
-    
+
     % The bit that actually removes the bad trials
     try
         cfg               = [];
@@ -408,34 +414,34 @@ for d = [2 1]
         data              = ft_selectdata(cfg,data);
     catch
     end
-    
-    
+
+
     % Perform timelockanalysis & baseline-correct
     cfg             = [];
     cfg.channel     = 'all';
     avg_all         = ft_timelockanalysis(cfg,data);
-    
+
     cfg             = [];
     cfg.baseline    = [-0.1 0];
     [avg_all]       = ft_timelockbaseline(cfg, avg_all);
-    
+
     % Plot in fT (not included in the paper - just for illustration)
     cfg             = [];
     cfg.parameter   = 'avg';
     cfg.linewidth   = 2;
     cfg.colorgroups = 'allblack';
     ft_databrowser(cfg,avg_all);
-    
+
     % Perform Students t-test
     epoched_dataset = [];
-    
+
     for i = 1:length(data.trial)
         epoched_dataset(:,:,i) = data.trial{1,i};
     end
-    
+
     SE = std(epoched_dataset,[],3)/sqrt(size(epoched_dataset,3));
     avg_all.t_value = avg_all.avg./SE;
-    
+
     % Plot t-value
     cd(save_dir);
     figure;
@@ -447,8 +453,8 @@ for d = [2 1]
     xlim([-0.1 0.4]);
     ylim([-11 11]);
     print(['ERF' num2str(d)],'-dpng','-r400');
-    
-    
+
+
     % Create and Plot 2D Layout (Fieldtrip)
     if d == 2
         cfg             = [];
@@ -463,11 +469,11 @@ for d = [2 1]
         cfg.overlap     = 'keep';
         lay_123         = ft_prepare_layout(cfg);
     end
-    
+
     % Plot Using ft_topoplotER and change the colormap to RdBu
     ft_hastoolbox('brewermap', 1);         % ensure this toolbox is on the path
     cmap = colormap(flipud(brewermap(64,'RdBu'))); % change the colormap
-    
+
     cfg             = [];
     cfg.parameter   = 't_value';
     cfg.channel     = ft_channelselection_opm('TAN',rawData);
@@ -485,7 +491,7 @@ for d = [2 1]
     c.FontSize      = 30;
     c.Label.String  = 't-value';
     print(['fieldtmap' num2str(d)],'-dpng','-r400');
-    
+
 end
 
 
@@ -547,7 +553,7 @@ lf_concat = cat(2,lf_2.leadfield{:});
 for k = 1:2
     lf_2.leadfield{k} = lf_concat;
 end
-   
+
 
 %% Source Analysis
 cfg                    = [];
@@ -562,7 +568,7 @@ cfg.lcmv.projectnoise  = 'yes';
 cfg.lcmv.lambda        = '0.1%';
 sourceall              = ft_sourceanalysis(cfg, avg);
 
-% Find filter from the first .pos 
+% Find filter from the first .pos
 filter123 = cat(1,sourceall.avg.filter{1,:});
 
 VE          = [];
@@ -607,7 +613,3 @@ xlabel('Time (s)','FontSize',20);
 ylabel('t-value','FontSize',20);
 title('');
 print('beamforming','-dpng','-r400');
-
-
-
-
