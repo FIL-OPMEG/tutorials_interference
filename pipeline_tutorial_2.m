@@ -5,7 +5,7 @@
 % 'Interference Suppression Techniques for OPM-based
 % MEG: Opportunities and Challenges'. Seymour et al., (2021)
 %
-% MATLAB scripts were written by 
+% MATLAB scripts were written by
 % Dr. Robert Seymour, July 2021 - September 2021
 % For enquiries, please contact: rob.seymour@ucl.ac.uk
 %
@@ -17,6 +17,8 @@
 %% Data Paths
 % Please download all code dependencies from Zenodo:
 % https://doi.org/10.5281/zenodo.5541312
+% If you download and extract this archive to the directory one level
+% above this script, the paths below should work.
 %
 % Or alternatively, you can download the latest versions from:
 % - Fieldtrip:     https://www.fieldtriptoolbox.org/download/
@@ -25,9 +27,12 @@
 %
 % * = private repository. Email rob.seymour@ucl.ac.uk for access
 
-fieldtripDir    = 'D:\data\tutorial_OPM_scripts\fieldtrip-master';
-script_dir      = 'D:\data\tutorial_OPM_scripts\analyse_OPMEG';
-NR4M_dir        = 'D:\data\tutorial_OPM_scripts\NR4M';
+root = fileparts(which(mfilename));
+cd(root);
+
+fieldtripDir    = fullfile(root,'..','tutorial_OPM_scripts','fieldtrip-master');
+script_dir      = fullfile(root,'..','tutorial_OPM_scripts','analyse_OPMEG');
+NR4M_dir        = fullfile(root,'..','tutorial_OPM_scripts','NR4M');
 
 % Add Fieldtrip to path
 disp('Adding the required scripts to your MATLAB path');
@@ -39,9 +44,10 @@ addpath(genpath(script_dir));
 addpath(genpath(NR4M_dir));
 
 
-%% BIDS data directory. This is specific to my PC - change accordingly.
-% Download from: https://doi.org/10.5281/zenodo.5539414
-data_dir        = 'D:\data\tutorial_OPM_data';
+%% BIDS data directory. If you extract it to the directory one level above
+% where this script lives, this will work:
+% Download from https://doi.org/10.5281/zenodo.5539414
+data_dir        = fullfile(root,'..','tutorial_OPM_data');
 
 
 %% Specify Save Directory
@@ -258,7 +264,7 @@ for c = 1:30
         'string','NEXT',...
         'UserData',struct('flip',0),...
         'callback',@pb_call);
-    
+
     % Find limits of y-axis
     [minDistance, indexOfMin] = min(abs(freq-2));
     [minDistance, indexOfMax] = min(abs(freq-100));
@@ -276,7 +282,7 @@ for c = 1:30
     cfg.colormap  = colormap123;
     subplot(8,4,[3:4 7:8 11:12 15:16]);ft_topoplotIC(cfg, comp)
     set(gca,'FontSize',16) % Creates an axes and sets its FontSize to 18
-    
+
     % Plot the raw data from 1-11s
     subplot(8,4,[28:32]);
     plot(comp.time{1},comp.trial{1}(c,1:end),'linewidth',2);
@@ -284,7 +290,7 @@ for c = 1:30
     set(gca,'FontSize',16) % Creates an axes and sets its FontSize to 18
     xlabel('Time(s)','FontSize',23);
     ylabel({'Magnetic';'Field (T)'},'FontSize',23);
-    
+
         % Plot PSD
     subplot(8,4,[1:2 5:6 9:10 13:14]);
     semilogy(freq,po(:,c),'-k','LineWidth',2);
@@ -295,7 +301,7 @@ for c = 1:30
     ylabel(labY,'interpreter','latex','FontSize',23)
     ylim([min_lim max_lim]);
     %print(['component_PSD' num2str(c)],'-dpng','-r300');
-    
+
     % If component 6 or 10 save a picture
     if ismember(c,[6 10])
         print(['component_' num2str(c)],'-dpng','-r300');
@@ -304,10 +310,10 @@ for c = 1:30
     % Wait for user input
     uiwait(S.f)
     h = findobj('Tag','moveon');
-    
+
     % Clear the Figure for the next sensor
     clf(S.f);
-    
+
 end
 
 
@@ -341,7 +347,7 @@ print('ICA_gain','-dpng','-r300')
 [max_FC5,num_secs] = max_FC_calc(data_clean);
 
 % Make Figure to show the results
-figure; 
+figure;
 set(gcf,'Position',[200 200 800 400]);
 plot(num_secs,mean(max_FC1,2),'r','LineWidth',2); hold on;
 plot(num_secs,mean(max_FC2,2),'g','LineWidth',2);
@@ -497,4 +503,3 @@ xlabel('Time (s)','FontSize',25);
 ylabel('Frequency (Hz)','FontSize',25);
 plot(repmat(2.5,length([1:2:41])),[1:2:41],'--k','LineWidth',2);
 print('beta_desync_DQ_raw','-dpng','-r300');
-
