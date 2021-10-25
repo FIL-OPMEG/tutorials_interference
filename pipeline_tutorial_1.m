@@ -28,7 +28,7 @@
 %
 % * = private repositories. Email rob.seymour@ucl.ac.uk for access
 
-root = fileparts(which(mfilename));
+root = fileparts(matlab.desktop.editor.getActiveFilename);
 cd(root);
 
 fieldtripDir    = fullfile(root,'..','tutorial_OPM_scripts','fieldtrip-master');
