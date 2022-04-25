@@ -1,7 +1,7 @@
 # Interference suppression tutorials for OPM data
 
 Tutorial-style scripts for the paper: 
-*Seymour et al., (2021). Interference suppression techniques for OPM-based MEG:  Opportunities and challenges. In Prep.*
+*Seymour et al., (2021). Interference suppression techniques for OPM-based MEG:  Opportunities and challenges. Neuroimage*
 
 ## Tutorials:
 
