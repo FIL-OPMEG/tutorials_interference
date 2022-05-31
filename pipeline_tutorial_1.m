@@ -3,7 +3,7 @@
 % First example tutorial for the manuscript:
 %
 % 'Interference Suppression Techniques for OPM-based
-% MEG: Opportunities and Challenges'. Seymour et al., (2021)
+% MEG: Opportunities and Challenges'. Seymour et al., (2022). Neuroimage.
 %
 % MATLAB scripts were written by
 % Dr. Robert Seymour, July 2021 - September 2021
@@ -23,7 +23,7 @@
 % Or alternatively, you can download the latest versions from:
 % - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
 % - analyse_OPMEG:  https://github.com/neurofractal/analyse_OPMEG
-% - optitrack:     https://github.com/FIL-OPMEG/optitrack
+% - optitrack:      https://github.com/FIL-OPMEG/optitrack
 %
 % for ft_denoise_hfc please email rob.seymour@ucl.ac.uk
 
@@ -206,7 +206,7 @@ print('opti_regression','-dpng','-r400');
 
 %% Homogenous Field Correction
 % Please contact rob.seymour@ucl.ac.uk for this script
-[data_out_mfc, M, chan_inds] = ft_denoise_hfc(rawData_MEG_reg);
+[data_out_mfc, M, chan_inds] = ft_denoise_hfc([],rawData_MEG_reg);
 
 % Plot PSD
 cfg                 = [];
@@ -239,7 +239,6 @@ data_out_mfc        = ft_selectdata(cfg,data_out_mfc);
 
 
 %% Temporal Filtering
-
 % Spectral Interpolation
 cfg                     = [];
 cfg.channel             = 'all';
@@ -411,7 +410,6 @@ for d = [2 1]
         data              = ft_selectdata(cfg,data);
     catch
     end
-
 
     % Perform timelockanalysis & baseline-correct
     cfg             = [];

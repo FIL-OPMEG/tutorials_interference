@@ -3,7 +3,7 @@
 % Second example tutorial for the manuscript:
 %
 % 'Interference Suppression Techniques for OPM-based
-% MEG: Opportunities and Challenges'. Seymour et al., (2021)
+% MEG: Opportunities and Challenges'. Seymour et al., (2022). Neuroimage.
 %
 % MATLAB scripts were written by
 % Dr. Robert Seymour, July 2021 - September 2021
@@ -24,7 +24,6 @@
 % - Fieldtrip:     https://www.fieldtriptoolbox.org/download/
 % - analyse_OPMEG: https://github.com/neurofractal/analyse_OPMEG
 %
-% * = private repository. Email rob.seymour@ucl.ac.uk for access
 
 root = fileparts(which(mfilename));
 cd(root);
@@ -157,7 +156,7 @@ print('synth_grad_psd','-dpng','-r300');
 
 %% HFC
 % Please email rob.seymour@ucl.ac.uk for this script
-[data_out_mfc, M, chan_inds] = ft_denoise_hfc(data_synth_grad);
+[data_out_mfc, M, chan_inds] = ft_denoise_hfc([],data_synth_grad);
 
 % Plot PSD
 cfg                 = [];
