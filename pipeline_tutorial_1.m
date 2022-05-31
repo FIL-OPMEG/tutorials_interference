@@ -16,7 +16,7 @@
 
 %% Data Paths
 % Please download all code dependencies from Zenodo:
-% https://doi.org/10.5281/zenodo.5541312
+% https://doi.org/10.5281/zenodo.6599496
 % If you download and extract this archive to the directory one level
 % above this script, the paths below should work.
 %

@@ -1,7 +1,7 @@
 # Interference suppression tutorials for OPM data
 
 Tutorial-style scripts for the paper: 
-*Seymour et al., (2021). Interference suppression techniques for OPM-based MEG:  Opportunities and challenges. Neuroimage*
+*Seymour et al., (2022). Interference suppression techniques for OPM-based MEG:  Opportunities and challenges. Neuroimage*
 
 ## Tutorials:
 
@@ -18,13 +18,13 @@ Tutorial-style scripts for the paper:
 
 ## Code Dependencies:
 
-Please download all code dependencies from **Zenodo: https://doi.org/10.5281/zenodo.5541312**. This will allow you to exactly reproduce the analyses presented in the article.
+Please download all code dependencies from **Zenodo: https://doi.org/10.5281/zenodo.6599496**. This will allow you to exactly reproduce the analyses presented in the article.
 
 Alternatively, you can download the latest versions of the toolboxes from:
 - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
 - analyse_OPMEG:  https://github.com/neurofractal/analyse_OPMEG
-- NR4M:           https://github.com/FIL-OPMEG/NR4M
 - optitrack:      https://github.com/FIL-OPMEG/optitrack
+- ft_denoise_hfc: email rob.seymour@ucl.ac.uk
 
 ## License:
 
