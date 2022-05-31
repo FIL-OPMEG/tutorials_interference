@@ -23,10 +23,9 @@
 % Or alternatively, you can download the latest versions from:
 % - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
 % - analyse_OPMEG:  https://github.com/neurofractal/analyse_OPMEG
-% - NR4M*:          https://github.com/FIL-OPMEG/NR4M
-% - optitrack*:     https://github.com/FIL-OPMEG/optitrack
+% - optitrack:     https://github.com/FIL-OPMEG/optitrack
 %
-% * = private repositories. Email rob.seymour@ucl.ac.uk for access
+% for ft_denoise_hfc please email rob.seymour@ucl.ac.uk
 
 root = fileparts(matlab.desktop.editor.getActiveFilename);
 cd(root);
@@ -34,7 +33,6 @@ cd(root);
 fieldtripDir    = fullfile(root,'..','tutorial_OPM_scripts','fieldtrip-master');
 script_dir      = fullfile(root,'..','tutorial_OPM_scripts','analyse_OPMEG');
 mocap_func      = fullfile(root,'..','tutorial_OPM_scripts','optitrack');
-NR4M_dir        = fullfile(root,'..','tutorial_OPM_scripts','NR4M');
 
 % Add Fieldtrip to path
 disp('Adding the required scripts to your MATLAB path');
@@ -43,7 +41,6 @@ ft_defaults;
 
 % Add other scripts to path
 addpath(genpath(script_dir));
-addpath(genpath(NR4M_dir));
 addpath(mocap_func);
 
 
@@ -208,7 +205,7 @@ print('opti_regression','-dpng','-r400');
 
 
 %% Homogenous Field Correction
-% Please contact t.tierney@ucl.ac.uk for this script
+% Please contact rob.seymour@ucl.ac.uk for this script
 [data_out_mfc, M, chan_inds] = ft_denoise_hfc(rawData_MEG_reg);
 
 % Plot PSD

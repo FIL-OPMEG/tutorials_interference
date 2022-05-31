@@ -23,7 +23,6 @@
 % Or alternatively, you can download the latest versions from:
 % - Fieldtrip:     https://www.fieldtriptoolbox.org/download/
 % - analyse_OPMEG: https://github.com/neurofractal/analyse_OPMEG
-% - NR4M*:          https://github.com/FIL-OPMEG/NR4M
 %
 % * = private repository. Email rob.seymour@ucl.ac.uk for access
 
@@ -32,7 +31,6 @@ cd(root);
 
 fieldtripDir    = fullfile(root,'..','tutorial_OPM_scripts','fieldtrip-master');
 script_dir      = fullfile(root,'..','tutorial_OPM_scripts','analyse_OPMEG');
-NR4M_dir        = fullfile(root,'..','tutorial_OPM_scripts','NR4M');
 
 % Add Fieldtrip to path
 disp('Adding the required scripts to your MATLAB path');
@@ -158,6 +156,7 @@ print('synth_grad_psd','-dpng','-r300');
 
 
 %% HFC
+% Please email rob.seymour@ucl.ac.uk for this script
 [data_out_mfc, M, chan_inds] = ft_denoise_hfc(data_synth_grad);
 
 % Plot PSD
