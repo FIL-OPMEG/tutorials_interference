@@ -16,6 +16,11 @@ Tutorial-style scripts for the paper:
 - Data: [https://doi.org/10.5281/zenodo.5539414](https://doi.org/10.5281/zenodo.5539414)
 - Script: [pipeline_tutorial_2.m](./pipeline_tutorial_2.m)
 
+### 3. Auditory evoked field paradigm when participant is sitting still
+
+- Data: Seymour, R. (2022, October 24). WCHN OPM Example Data. Retrieved from [osf.io/vy5n6](osf.io/vy5n6)
+- Script: [stationary_AEF.m](./stationary_AEF.m)
+
 ## Code Dependencies:
 
 Please download all code dependencies from **Zenodo: https://doi.org/10.5281/zenodo.6599496**. This will allow you to exactly reproduce the analyses presented in the article.
