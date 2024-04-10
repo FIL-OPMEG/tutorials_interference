@@ -8,7 +8,11 @@
 % MEG: Opportunities and Challenges'. Seymour et al., (2022). Neuroimage.
 %
 % MATLAB scripts were written by
-% Dr. Robert Seymour, May 2023
+% Dr. Robert Seymour, May 2023.
+%
+% Updated April 2024, using the development version of SPM 
+% (downloaded 10/04/2024).
+%
 % For enquiries, please contact: rob.seymour@ucl.ac.uk
 %
 % Tested on MATLAB 2019a, Windows
@@ -29,13 +33,13 @@ root = fileparts(matlab.desktop.editor.getActiveFilename);
 cd(root);
 
 spm_path        = 'D:\scripts\spm12';
-opm_path        = 'D:\Github\OPM';
+% opm_path        = 'D:\Github\OPM';
 mocap_func      = 'D:\Github\optitrack';
 
 % Add SPM12, OPM and optitrack scripts to your path
 addpath(spm_path);
 addpath(mocap_func);
-addpath(opm_path);
+% addpath(opm_path);
 
 spm_jobman('initcfg');
 spm('defaults', 'eeg');
@@ -257,8 +261,12 @@ S           =  [];
 S.D         = eD;
 muD         = spm_eeg_average(S);
 
+%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot the ERF - note the peaks at around 100ms corresponding to the 
+% M100 auditory evoked field.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Plot the ERF
 % Don't plot the bad channels
 MEGind  = indchantype(eD,'MEGMAG');
 used    = setdiff(MEGind,badchannels(muD));
@@ -278,6 +286,11 @@ ylim([-220 220]); % -220fT to 220fT
 xlabel('Time (s)','FontSize',18)
 ylabel('B (fT)','FontSize',18);
 print('ERF','-dpng','-r400')
+
+%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot a topolpot of the M100 response.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Topoplot (1)
 S       = [];
@@ -310,8 +323,7 @@ figure; ft_plot_layout(layout,'fontsize',7)
 % Plot Using ft_topoplotER
 cfg             = [];
 cfg.parameter   = 'avg';
-%cfg.channel     = 'MEG';
-cfg.layout      = layout;
+cfg.layout      = lay;
 cfg.xlim        = [0.08 0.11];
 %cfg.zlim        = [-6 6];
 cfg.linewidth   = 2;
@@ -325,4 +337,38 @@ c.FontSize      = 30;
 c.Label.String  = 'fT';
 print('topoplot','-dpng','-r400');
 
+%% Topoplot (3) - ANAT
+
+% Get layout from SPM (ANAT Method - Alexander et al., in prep)
+fid = fiducials(D);
+grad = D.sensors('MEG');
+fid_struct = struct('NAS', fid.fid.pnt(contains(fid.fid.label, 'nas'),:), ...
+    'LPA', fid.fid.pnt(contains(fid.fid.label, 'lpa'),:), ...
+    'RPA', fid.fid.pnt(contains(fid.fid.label, 'rpa'),:));
+pos = grad.coilpos;
+lay = spm_get_anatomical_layout(pos, grad.label, double(gifti(D.inv{1}.mesh.tess_scalp).vertices), fid_struct, 0);
+
+% Convert to mm
+lay = ft_convert_units(lay,'mm');
+
+% Make the mask = to the outline
+lay.mask{1} = lay.outline{1};
+
+% Plot Using ft_topoplotER
+cfg             = [];
+cfg.parameter   = 'avg';
+cfg.channel     = {'*-TAN'}
+cfg.layout      = lay;
+cfg.xlim        = [0.08 0.11];
+%cfg.zlim        = [-6 6];
+cfg.linewidth   = 2;
+cfg.showlabels  = 'yes';
+cfg.comment     = 'no';
+figure; set(gcf,'Position',[1 1 800 800]);
+ft_topoplotER(cfg,evoked_FT); hold on;
+c               = colorbar;
+c.Location      = 'southoutside';
+c.FontSize      = 30;
+c.Label.String  = 'fT';
+print('topoplot_ANAT','-dpng','-r400');
 

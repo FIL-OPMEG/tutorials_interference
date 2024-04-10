@@ -2,11 +2,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First example tutorial for the manuscript:
 %
+% SPM12 Version
+%
 % 'Interference Suppression Techniques for OPM-based
 % MEG: Opportunities and Challenges'. Seymour et al., (2022). Neuroimage.
 %
 % MATLAB scripts were written by
-% Dr. Robert Seymour, July 2021 - September 2021
+% Dr. Robert Seymour, May 2023
 % For enquiries, please contact: rob.seymour@ucl.ac.uk
 %
 % Tested on MATLAB 2019a, Windows
@@ -21,11 +23,9 @@
 % above this script, the paths below should work.
 %
 % Or alternatively, you can download the latest versions from:
-% - Fieldtrip:      https://www.fieldtriptoolbox.org/download/
-% - analyse_OPMEG:  https://github.com/neurofractal/analyse_OPMEG
+% - SPM12:          https://www.fil.ion.ucl.ac.uk/spm/software/download/
 % - optitrack:      https://github.com/FIL-OPMEG/optitrack
 %
-% for ft_denoise_hfc please email rob.seymour@ucl.ac.uk
 
 root = fileparts(matlab.desktop.editor.getActiveFilename);
 cd(root);
